@@ -20,15 +20,15 @@ class NeuralNetwork(object):
         #
         # Note: in Python, you can define a function with a lambda expression,
         # as shown below.
-        #self.activation_function = lambda x : (1/(1+np.exp(-x)))  # Replace 0 with your sigmoid calculation.
+        self.activation_function = lambda x : (1/(1+np.exp(-x)))  # Replace 0 with your sigmoid calculation.
         
         ### If the lambda code above is not something you're familiar with,
         # You can uncomment out the following three lines and put your 
         # implementation there instead.
         #
-        def sigmoid(x):
-            return (1/(1+np.exp(-x))) # Replace 0 with your sigmoid calculation here
-        self.activation_function = sigmoid
+        #def sigmoid(x):
+        #    return 0 # Replace 0 with your sigmoid calculation here
+        #self.activation_function = sigmoid
                     
 
     def train(self, features, targets):
@@ -89,17 +89,17 @@ class NeuralNetwork(object):
         error = y - final_outputs # Output layer error is the difference between desired target and actual output.
         
         # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = np.dot(error, self.weights_hidden_to_output.T)
+        hidden_error = self.weights_hidden_to_output*error
         
         # TODO: Backpropagated error terms - Replace these values with your calculations.
         output_error_term = error
         
-        hidden_error_term = hidden_error * hidden_outputs * (1 - hidden_outputs)
+        hidden_error_term = hidden_error*((1-hidden_outputs)*(hidden_outputs))[:,None]
         
         # Weight step (input to hidden)
-        delta_weights_i_h += hidden_error_term * X[:, None]
+        delta_weights_i_h += X[:,None]*hidden_error_term.T
         # Weight step (hidden to output)
-        delta_weights_h_o += output_error_term * hidden_outputs[:, None]
+        delta_weights_h_o += output_error_term*hidden_outputs[:,None]
 
         return delta_weights_i_h, delta_weights_h_o
 
@@ -138,7 +138,7 @@ class NeuralNetwork(object):
 #########################################################
 # Set your hyperparameters here
 ##########################################################
-iterations = 4000
+iterations = 15000
 learning_rate = 0.5
 hidden_nodes = 13
 output_nodes = 1
